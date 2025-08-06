@@ -1,14 +1,15 @@
 $(function () {
    $("#grid").kendoGrid({
   columns: [
-    { field: "Id" },
-    { field: "Sequencia" },
-	{ field: "Situacao" },
-	{ field: "Motivo" },
+    { field: "Nome" },
+    { field: "Categoria" },
+	{ field: "Preco" },
+	{ field: "DataCadastro" },
+	{ field: "Ativo" },
   ],
   columnMenu: true,
   dataSource: [
-    { Id: "01", Sequencia: "002", Situacao: "Em Andamento",  Motivo: "Teste"},
+    { Nome: "01", Categoria: "002", Preco: "Em Andamento",  DataCadastro: "Teste", Ativo: "Sim"},
     { Id: "02", Sequencia: 33 }
   ]
 });
@@ -41,7 +42,7 @@ $("#toolbar").kendoToolBar({
     }
 		var editar = $("#editar").data("kendoWindow");
 		editar.open().center();
-		
+
 			} }
         ],
     });
