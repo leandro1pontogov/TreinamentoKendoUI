@@ -1,0 +1,26 @@
+#cadastro{
+flex-direction: column;
+display: flex;
+margin-left: 30px;
+gap: 10px;
+}
+
+#cadastro .k-textbox, #cadastro .k-dropdown, #cadastro .k-numerictextbox{
+  width: 90%;
+}  
+
+#cadastro .k-switch{
+  margin-left: 30px;
+}
+
+#textonome{
+  margin-top: 15px;
+}
+
+#linha-botoes{
+  margin-top: 10px;
+}
+
+#botao-excluir{
+  margin-left: 120px;
+}
