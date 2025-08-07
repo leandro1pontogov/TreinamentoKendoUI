@@ -1,26 +1,63 @@
-#cadastro{
-flex-direction: column;
-display: flex;
-margin-left: 30px;
-gap: 10px;
+#cadastro {
+  flex-direction: column;
+  display: flex;
+  margin-left: 30px;
+  gap: 10px;
 }
 
-#cadastro .k-textbox, #cadastro .k-dropdown, #cadastro .k-numerictextbox{
+#cadastro .k-textbox,
+#cadastro .k-dropdown,
+#cadastro .k-numerictextbox {
   width: 90%;
-}  
+}
 
-#cadastro .k-switch{
+#cadastro .k-switch {
   margin-left: 30px;
 }
 
-#textonome{
+#textonome {
   margin-top: 15px;
 }
 
-#linha-botoes{
+#linha-botoes {
   margin-top: 10px;
 }
 
-#botao-excluir{
+#botao-excluir {
   margin-left: 120px;
+}
+
+#visu {
+  background-color: rgba(195, 210, 243, 0.404);
+  height: 100%;
+  flex-direction: column;
+  display: flex;
+}
+
+#ajuste {
+  margin-left: 100px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+  gap: 10px;
+}
+
+#linha2 {
+  margin-left: -20px;
+}
+
+#linha3 {
+  margin-left: 3px;
+}
+
+#linha4 {
+  margin-left: -44px;
+}
+
+#linha5 {
+  margin-left: 5px;
+}
+
+#ajuste .k-textbox input {
+  background-color: rgba(186, 194, 211, 0.404);
 }

@@ -128,5 +128,31 @@ $(function () {
     
   });
 
+   $("#tabstrip").kendoTabStrip({
+    dataTextField: "Name",
+    dataSource: [
+      { Name: "Detalhes"},
+    ]
+  });
+
+  $("#tab-nome").kendoTextBox({
+    readonly: true
+  });
+
+  $("#tab-categoria").kendoTextBox({
+    readonly: true
+  });
+
+  $("#tab-preco").kendoTextBox({
+    readonly: true
+  });
+
+  $("#tab-data").kendoTextBox({
+    readonly: true
+  });
+
+  $("#tab-ativo").kendoTextBox({
+    readonly: true
+  });
 
 });
