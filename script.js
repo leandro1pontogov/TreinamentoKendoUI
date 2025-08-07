@@ -99,7 +99,8 @@ $(function () {
     label: "Preco",
     format: "c0",
     decimals: 1,
-    value: 0.00
+    value: 0.00,
+    min: 0
   });
 
   $("#data").kendoDatePicker({
@@ -124,8 +125,12 @@ $(function () {
     
   });
 
-  $("#botao-gravar").kendoButton({
-    
+  $("#botao-gravar").kendoButton({}).on("click", function(){
+    if($("#textbox").val() !== ""){
+      alert("a");
+    }else{
+      $("#msgErroNome").show().delay(2000).fadeOut();
+    }
   });
 
    $("#tabstrip").kendoTabStrip({
