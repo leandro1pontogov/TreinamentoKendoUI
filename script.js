@@ -14,10 +14,10 @@ $(function () {
       { Nome: "Sofa", Categoria: "Moveis", Preco: "750", DataCadastro: "02/03/2025", Ativo: "Nao" },
     ],
     pageable: {
-    pageSize: 2,
-    input: true,
-    pageSizes: true
-  }
+      pageSize: 30,
+      input: true,
+      pageSizes: true
+    }
   });
 
   $("#toolbar").kendoToolBar({
@@ -117,39 +117,53 @@ $(function () {
     trackRounded: "small"
   })
 
+  
+
   $("#botao-excluir").kendoButton({
-    
+
   });
 
-  $("#botao-fechar").kendoButton({}).on("click", function(){
+  $("#botao-fechar").kendoButton({}).on("click", function () {
     $("#tela-cadastro").data("kendoWindow").close();
   });
 
-  $("#botao-gravar").kendoButton({}).on("click", function(){
-    if($("#textbox").val() !== ""){
-      
-    }else {
+
+  $("#botao-gravar").kendoButton({}).on("click", function () {
+
+    var grid = $("#grid").data("kendoGrid");
+
+    if ($("#textbox").val() !== "") {
+
+        grid.dataSource.add({
+        Nome: $("#textbox").val(),
+        Categoria: $("#categoria").val(),
+        Preco: parseFloat($("#preco").val()),
+        DataCadastro: kendo.parseDate($("#data").val()),
+        Ativo: $("#ativo").data("kendoSwitch").check()
+      });
+
+    } else {
       $("#msgErroNome").show().delay(2000).fadeOut();
     }
 
-    if($("#categoria").val() !== ""){
-      
-    }else{
+    if ($("#categoria").val() !== "") {
+
+    } else {
       $("#msgErroCategoria").show().delay(2000).fadeOut();
     }
 
-    if($("#data").val() !== ""){
-      
-    }else{
+    if ($("#data").val() !== "") {
+
+    } else {
       $("#msgErroData").show().delay(2000).fadeOut();
     }
 
   });
 
-   $("#tabstrip").kendoTabStrip({
+  $("#tabstrip").kendoTabStrip({
     dataTextField: "Name",
     dataSource: [
-      { Name: "Detalhes"},
+      { Name: "Detalhes" },
     ]
   });
 
