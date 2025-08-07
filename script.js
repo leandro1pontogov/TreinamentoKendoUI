@@ -140,6 +140,7 @@ $(function () {
         Preco: parseFloat($("#preco").val()),
         DataCadastro: kendo.parseDate($("#data").val()),
         Ativo: $("#ativo").data("kendoSwitch").check()
+        
       });
 
     } else {
