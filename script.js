@@ -121,16 +121,29 @@ $(function () {
     
   });
 
-  $("#botao-fechar").kendoButton({
-    
+  $("#botao-fechar").kendoButton({}).on("click", function(){
+    $("#tela-cadastro").data("kendoWindow").close();
   });
 
   $("#botao-gravar").kendoButton({}).on("click", function(){
     if($("#textbox").val() !== ""){
-      alert("a");
-    }else{
+      
+    }else {
       $("#msgErroNome").show().delay(2000).fadeOut();
     }
+
+    if($("#categoria").val() !== ""){
+      
+    }else{
+      $("#msgErroCategoria").show().delay(2000).fadeOut();
+    }
+
+    if($("#data").val() !== ""){
+      
+    }else{
+      $("#msgErroData").show().delay(2000).fadeOut();
+    }
+
   });
 
    $("#tabstrip").kendoTabStrip({
