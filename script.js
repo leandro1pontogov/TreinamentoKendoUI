@@ -16,6 +16,7 @@ $(function () {
 
   $("#toolbar").kendoToolBar({
     items: [
+      {type : "spacer"},
       {
         type: "buttonGroup",
         buttons: [
@@ -42,6 +43,21 @@ $(function () {
               $("#textbox").closest(".k-textbox").show();
 
               $("#tela-cadastro").data("kendoWindow").center().open();
+
+              $("#categoria").kendoDropDownList({
+                dataSource: [
+                  {name: "Eletronico"},
+                  {name: "Moveis"},
+                  {name: "Eletrodomestico"}
+                ],
+                dataTextField: "name",
+                dataValueField: "name"
+              });
+
+              var categoria = $("#categoria").data("kendoDropDownList");
+              categoria.dataSource.add({name: "Comida"});
+              categoria.search("A");
+
             }
           },
           {
