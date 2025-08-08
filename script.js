@@ -4,6 +4,7 @@ $(function () {
     selectable: "row",
     change: selecionado,
     columns: [
+      { field: "Id"},
       { field: "Nome" },
       { field: "Categoria" },
       { field: "Preco" },
@@ -63,7 +64,7 @@ $(function () {
             }
           },
           {
-            text: "Editar", id: "btnEditar", click: function () {
+            text: "Editar", enable: false, id: "btnEditar", click: function () {
 
               if (!$("#tela-cadastro").data("kendoWindow")) {
                 $("#tela-cadastro").kendoWindow({
@@ -110,7 +111,7 @@ $(function () {
   $("#preco").kendoNumericTextBox({
     label: "Preco",
     format: "c0",
-    decimals: 1,
+    decimals: 2,
     value: 0.00,
     min: 0
   });
@@ -226,12 +227,16 @@ $(function () {
         $("#tab-ativo").val("Nao");
       }
 
+      $("#toolbar").data("kendoToolBar").enable("#btnEditar")
+
       $("#btnEditar").on("click", function () {
+
         $("#textbox").val(dataSelecionada.Nome);
         $("#categoria").data("kendoDropDownList").value(dataSelecionada.Categoria);
         $("#preco").data("kendoNumericTextBox").value(dataSelecionada.Preco);
         $("#data").data("kendoDatePicker").value(dataSelecionada.DataCadastro);
         $("#ativo").data("kendoSwitch").value(dataSelecionada.Ativo);
+
       });
 
     }
