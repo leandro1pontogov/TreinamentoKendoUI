@@ -1,6 +1,8 @@
 $(function () {
   $("#grid").kendoGrid({
     height: "60%",
+    selectable: "row",
+    change: "onRowSelect",
     columns: [
       { field: "Nome" },
       { field: "Categoria" },
@@ -9,15 +11,18 @@ $(function () {
       { field: "Ativo", template: "#= Ativo ? 'Sim' : 'Nao' #" },
     ],
     columnMenu: true,
-    dataSource: [
-      { Nome: "Celular", Categoria: "Eletronico", Preco: "2000.0", DataCadastro: "07/08/2025", Ativo: "Sim" },
-      { Nome: "Sofa", Categoria: "Moveis", Preco: "750", DataCadastro: "02/03/2025", Ativo: "Nao" },
-    ],
+    dataSource: {
+      transport: {
+        read: function(options){
+          options.success(JSON.parse(localStorage.getItem("produtos")) || [])
+        }
+      }
+    },
     pageable: {
       pageSize: 30,
       input: true,
-      pageSizes: true
-    }
+      pageSizes: true,
+    },
   });
 
   $("#toolbar").kendoToolBar({
@@ -126,19 +131,22 @@ $(function () {
   });
 
 
-  $("#botao-gravar").kendoButton({}).on("click", function () {
-
-    var grid = $("#grid").data("kendoGrid");
+  $("#botao-gravar").kendoButton().on("click", function () {
 
     if ($("#textbox").val() !== "") {
 
-        grid.dataSource.add({
+      const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+
+      produtos.push({
         Nome: $("#textbox").val(),
         Categoria: $("#categoria").val(),
         Preco: parseFloat($("#preco").val()),
         DataCadastro: kendo.parseDate($("#data").val()),
         Ativo: $("#ativo").data("kendoSwitch").check()
       });
+
+      localStorage.setItem("produtos", JSON.stringify(produtos));
+      $("#grid").data("kendoGrid").dataSource.read(produtos)
 
     } else {
       $("#msgErroNome").show().delay(2000).fadeOut();
