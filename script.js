@@ -5,8 +5,8 @@ $(function () {
       { field: "Nome" },
       { field: "Categoria" },
       { field: "Preco" },
-      { field: "DataCadastro" },
-      { field: "Ativo" },
+      { field: "DataCadastro", format: "{0:dd/MM/yyyy}" },
+      { field: "Ativo", template: "#= Ativo ? 'Sim' : 'Nao' #" },
     ],
     columnMenu: true,
     dataSource: [
@@ -117,8 +117,6 @@ $(function () {
     trackRounded: "small"
   })
 
-  
-
   $("#botao-excluir").kendoButton({
 
   });
@@ -140,7 +138,6 @@ $(function () {
         Preco: parseFloat($("#preco").val()),
         DataCadastro: kendo.parseDate($("#data").val()),
         Ativo: $("#ativo").data("kendoSwitch").check()
-        
       });
 
     } else {
