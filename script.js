@@ -1,15 +1,18 @@
+let modoEdicao = false;
+let idProdutoEditando = null;
+let produtoSelecionado = null;
+
 $(function () {
   $("#grid").kendoGrid({
     height: "60%",
     selectable: "row",
     change: selecionado,
     columns: [
-      { field: "Id" },
       { field: "Nome" },
       { field: "Categoria" },
-      { field: "Preco" },
-      { field: "DataCadastro", type: "date", format: "{0:dd/MM/yyyy}" },
-      { field: "Ativo", template: "#= Ativo ? 'Sim' : 'Nao' #" },
+      { field: "Preco", format: "{0:0.00}", width: "10%" },
+      { field: "DataCadastro", type: "date", format: "{0:dd/MM/yyyy}", width: "10%" },
+      { field: "Ativo", template: "#= Ativo ? 'Sim' : 'Nao' #", width: "10%" },
     ],
     columnMenu: true,
     dataSource: {
@@ -34,6 +37,8 @@ $(function () {
         buttons: [
           {
             text: "Incluir", click: function () {
+              modoEdicao = false;
+              idProdutoEditando = null;
 
               if (!$("#tela-cadastro").data("kendoWindow")) {
                 $("#tela-cadastro").kendoWindow({
@@ -71,7 +76,7 @@ $(function () {
                   visible: false,
                   width: 300,
                   height: 300,
-                  title: "Editar"
+                  title: "Cadastro"
                 });
               }
 
@@ -109,10 +114,12 @@ $(function () {
   categoria.search("A");
 
   $("#preco").kendoNumericTextBox({
+    prefixOptions: {
+      value: 0.00,
+    },
     label: "Preco",
-    format: "c0",
+    format: "{0:0.00}",
     decimals: 2,
-    value: 0.00,
     min: 0
   });
 
@@ -130,26 +137,60 @@ $(function () {
     trackRounded: "small"
   })
 
-  $("#botao-excluir").kendoButton().on("click", function () {
+  $("#botao-excluir").kendoButton().off("click").on("click", function () {
+
+    const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+    let grid = $("#grid").data("kendoGrid");
+    var produtoSelecionado = grid.dataItem(grid.select())
+
+    const novosDados = produtos.filter(a => (a.id !== produtoSelecionado.id))
+
+    localStorage.setItem("produtos", JSON.stringify(novosDados));
+    $("#grid").data("kendoGrid").dataSource.read();
     $("#tela-cadastro").data("kendoWindow").close();
   });
 
-  $("#botao-fechar").kendoButton({}).on("click", function () {
+  $("#botao-fechar").kendoButton({}).off("click").on("click", function () {
     $("#tela-cadastro").data("kendoWindow").close();
   });
 
 
-  $("#botao-gravar").kendoButton().on("click", function () {
+  $("#botao-gravar").kendoButton().off("click").on("click", function () {
 
-    if ($("#textbox").val() !== "") {
+    if ($("#textbox").val() === "") {
+      $("#msgErroNome").show().delay(2000).fadeOut();
+      return;
+    }
 
-      const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+    if ($("#categoria").val() === "") {
+      $("#msgErroCategoria").show().delay(2000).fadeOut();
+      return;
+    }
 
+    if ($("#data").val() === "") {
+      $("#msgErroData").show().delay(2000).fadeOut();
+      return;
+    }
+
+    const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+
+    if (modoEdicao && idProdutoEditando !== null) {
+      const index = produtos.findIndex(p => p.id === idProdutoEditando);
+      if (index !== -1) {
+        produtos[index] = {
+          id: produtoSelecionado.id,
+          Nome: $("#textbox").val(),
+          Categoria: $("#categoria").val(),
+          Preco: parseFloat($("#preco").val()),
+          DataCadastro: kendo.parseDate($("#data").val()),
+          Ativo: $("#ativo").data("kendoSwitch").check()
+        };
+      }
+    } else {
       let novoId = 1;
       if (produtos.length > 0) {
         novoId = Math.max(...produtos.map(p => p.id)) + 1;
       }
-
       produtos.push({
         id: novoId,
         Nome: $("#textbox").val(),
@@ -158,27 +199,29 @@ $(function () {
         DataCadastro: kendo.parseDate($("#data").val()),
         Ativo: $("#ativo").data("kendoSwitch").check()
       });
-
-      localStorage.setItem("produtos", JSON.stringify(produtos));
-      $("#grid").data("kendoGrid").dataSource.read(produtos)
-      $("#tela-cadastro").data("kendoWindow").close();
-
-    } else {
-      $("#msgErroNome").show().delay(2000).fadeOut();
     }
 
-    if ($("#categoria").val() !== "") {
+    localStorage.setItem("produtos", JSON.stringify(produtos));
+    $("#grid").data("kendoGrid").dataSource.read();
+    $("#tela-cadastro").data("kendoWindow").close();
 
-    } else {
-      $("#msgErroCategoria").show().delay(2000).fadeOut();
-    }
+    modoEdicao = false;
+    idProdutoEditando = null;
 
-    if ($("#data").val() !== "") {
+  });
 
-    } else {
-      $("#msgErroData").show().delay(2000).fadeOut();
-    }
+  $("#btnEditar").on("click", function () {
+    if (!produtoSelecionado) return;
+    modoEdicao = true;
+    idProdutoEditando = produtoSelecionado.id;
 
+    $("#textbox").val(produtoSelecionado.Nome);
+    $("#categoria").data("kendoDropDownList").value(produtoSelecionado.Categoria);
+    $("#preco").data("kendoNumericTextBox").value(produtoSelecionado.Preco);
+    $("#data").data("kendoDatePicker").value(produtoSelecionado.DataCadastro);
+    $("#ativo").data("kendoSwitch").value(produtoSelecionado.Ativo);
+
+    $("#tela-cadastro").data("kendoWindow").center().open();
   });
 
   $("#tabstrip").kendoTabStrip({
@@ -209,23 +252,17 @@ $(function () {
   });
 
   function selecionado() {
-    var grid = $("#grid").data("kendoGrid");
-    var linhaSelecionada = grid.select();
-    var dataSelecionada = grid.dataItem(linhaSelecionada);
+    let grid = $("#grid").data("kendoGrid");
+    let linhaSelecionada = grid.select();
+    let dataSelecionada = grid.dataItem(linhaSelecionada);
 
     if (dataSelecionada) {
-      $("#botao-excluir").kendoButton().on("click", function () {
-        grid.dataSource.remove(dataSelecionada);
-
-        var novosDados = grid.dataSource.data().toJSON();
-        localStorage.setItem("produtos", JSON.stringify(novosDados));
-      });
+      produtoSelecionado = dataSelecionada;
 
       $("#tab-nome").val(dataSelecionada.Nome);
       $("#tab-categoria").val(dataSelecionada.Categoria);
       $("#tab-preco").val(dataSelecionada.Preco);
       $("#tab-data").val(dataSelecionada.DataCadastro);
-      console.log(dataSelecionada);
 
       if (dataSelecionada.Ativo === true) {
         $("#tab-ativo").val("Sim");
@@ -233,41 +270,7 @@ $(function () {
         $("#tab-ativo").val("Nao");
       }
 
-      $("#toolbar").data("kendoToolBar").enable("#btnEditar")
-
-      $("#btnEditar").on("click", function () {
-
-        $("#textbox").val(dataSelecionada.Nome);
-        $("#categoria").data("kendoDropDownList").value(dataSelecionada.Categoria);
-        $("#preco").data("kendoNumericTextBox").value(dataSelecionada.Preco);
-        $("#data").data("kendoDatePicker").value(dataSelecionada.DataCadastro);
-        $("#ativo").data("kendoSwitch").value(dataSelecionada.Ativo);
-
-        $("#botao-gravar").off("click").on("click", function () {
-          const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
-
-          const index = produtos.findIndex(p => p.id === dataSelecionada.id);
-
-          if (index !== -1) {
-            produtos[index] = {
-              id: dataSelecionada.id,
-              Nome: $("#textbox").val(),
-              Categoria: $("#categoria").val(),
-              Preco: parseFloat($("#preco").val()),
-              DataCadastro: kendo.parseDate($("#data").val()),
-              Ativo: $("#ativo").data("kendoSwitch").check()
-            };
-
-            localStorage.setItem("produtos", JSON.stringify(produtos));
-
-            $("#grid").data("kendoGrid").dataSource.data(produtos);
-          }
-
-          $("#tela-cadastro").data("kendoWindow").close();
-        });
-
-      });
-
+      $("#toolbar").data("kendoToolBar").enable("#btnEditar");
     }
   }
 
