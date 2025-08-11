@@ -4,7 +4,7 @@ $(function () {
     selectable: "row",
     change: selecionado,
     columns: [
-      { field: "Id"},
+      { field: "Id" },
       { field: "Nome" },
       { field: "Categoria" },
       { field: "Preco" },
@@ -145,7 +145,13 @@ $(function () {
 
       const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
 
+      let novoId = 1;
+      if (produtos.length > 0) {
+        novoId = Math.max(...produtos.map(p => p.id)) + 1;
+      }
+
       produtos.push({
+        id: novoId,
         Nome: $("#textbox").val(),
         Categoria: $("#categoria").val(),
         Preco: parseFloat($("#preco").val()),
@@ -236,6 +242,29 @@ $(function () {
         $("#preco").data("kendoNumericTextBox").value(dataSelecionada.Preco);
         $("#data").data("kendoDatePicker").value(dataSelecionada.DataCadastro);
         $("#ativo").data("kendoSwitch").value(dataSelecionada.Ativo);
+
+        $("#botao-gravar").off("click").on("click", function () {
+          const produtos = JSON.parse(localStorage.getItem("produtos")) || [];
+
+          const index = produtos.findIndex(p => p.id === dataSelecionada.id);
+
+          if (index !== -1) {
+            produtos[index] = {
+              id: dataSelecionada.id,
+              Nome: $("#textbox").val(),
+              Categoria: $("#categoria").val(),
+              Preco: parseFloat($("#preco").val()),
+              DataCadastro: kendo.parseDate($("#data").val()),
+              Ativo: $("#ativo").data("kendoSwitch").check()
+            };
+
+            localStorage.setItem("produtos", JSON.stringify(produtos));
+
+            $("#grid").data("kendoGrid").dataSource.data(produtos);
+          }
+
+          $("#tela-cadastro").data("kendoWindow").close();
+        });
 
       });
 
